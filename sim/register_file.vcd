@@ -1,0 +1,115 @@
+$date
+	Mon May 25 08:22:45 2026
+$end
+$version
+	Icarus Verilog
+$end
+$timescale
+	1ps
+$end
+$scope module tb_RegisterFile $end
+$var wire 32 ! rdata2 [31:0] $end
+$var wire 32 " rdata1 [31:0] $end
+$var reg 1 # clk $end
+$var reg 5 $ raddr1 [4:0] $end
+$var reg 5 % raddr2 [4:0] $end
+$var reg 5 & waddr [4:0] $end
+$var reg 32 ' wdata [31:0] $end
+$var reg 1 ( we $end
+$scope module test_register_file $end
+$var wire 1 # clk $end
+$var wire 5 ) raddr1 [4:0] $end
+$var wire 5 * raddr2 [4:0] $end
+$var wire 5 + waddr [4:0] $end
+$var wire 32 , wdata [31:0] $end
+$var wire 1 ( we $end
+$var wire 32 - rdata2 [31:0] $end
+$var wire 32 . rdata1 [31:0] $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+$comment Show the parameter values. $end
+$dumpall
+$end
+#0
+$dumpvars
+bx .
+bx -
+b101010 ,
+b101 +
+bx *
+bx )
+1(
+b101010 '
+b101 &
+bx %
+bx $
+0#
+bx "
+bx !
+$end
+#20000
+1#
+#22000
+b101010 !
+b101010 -
+b101010 "
+b101010 .
+b101 %
+b101 *
+b101 $
+b101 )
+0(
+#32000
+b0 &
+b0 +
+1(
+#40000
+0#
+#60000
+1#
+#62000
+b0 !
+b0 -
+b0 "
+b0 .
+b0 %
+b0 *
+b0 $
+b0 )
+0(
+#72000
+b100011 '
+b100011 ,
+b1010 &
+b1010 +
+#80000
+0#
+#100000
+1#
+#102000
+bx !
+bx -
+bx "
+bx .
+b1010 %
+b1010 *
+b1010 $
+b1010 )
+#112000
+1(
+#120000
+0#
+#140000
+b100011 "
+b100011 .
+b100011 !
+b100011 -
+1#
+#142000
+b101010 "
+b101010 .
+b101 $
+b101 )
+0(
+#152000
