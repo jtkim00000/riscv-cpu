@@ -1,0 +1,60 @@
+$date
+	Thu Jun  4 02:13:19 2026
+$end
+$version
+	Icarus Verilog
+$end
+$timescale
+	1ps
+$end
+$scope module tb_ProgramCounter $end
+$var wire 32 ! rdata [31:0] $end
+$var reg 1 " clk $end
+$var reg 32 # wdata [31:0] $end
+$scope module test_program_counter $end
+$var wire 1 " clk $end
+$var wire 32 $ rdata [31:0] $end
+$var wire 32 % wdata [31:0] $end
+$var reg 32 & program_counter [31:0] $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+$comment Show the parameter values. $end
+$dumpall
+$end
+#0
+$dumpvars
+bx &
+b1111 %
+bx $
+b1111 #
+0"
+bx !
+$end
+#10000
+b1111 !
+b1111 $
+b1111 &
+1"
+#20000
+b101010 #
+b101010 %
+0"
+#30000
+b101010 !
+b101010 $
+b101010 &
+1"
+#40000
+0"
+#1040000
+b1 #
+b1 %
+#1050000
+b1 !
+b1 $
+b1 &
+1"
+#1060000
+0"
+#1080000
