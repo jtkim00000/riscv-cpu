@@ -4,11 +4,12 @@ module instruction_memory (
 );
 
     // Smaller size for simulation
-    reg [31:0] instruction_memory [0:255];
+    reg [7:0] instruction_memory [0:255];
 
     // Load program
     initial $readmemh("prog/instr_mem_test.hex", instruction_memory, 8'd0);   
 
-    assign instr = instruction_memory[raddr[7:0]];
+    //using 32-bit word size, but using the higher bits of pc
+    assign instr = {instruction_memory[raddr[7:0]], instruction_memory[raddr[7:0]+1], instruction_memory[raddr[7:0]+2], instruction_memory[raddr[7:0]+3]};
 
 endmodule

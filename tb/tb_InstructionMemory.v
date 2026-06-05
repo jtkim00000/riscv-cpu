@@ -24,7 +24,7 @@ module tb_InstructionMemory;
         else
             $display("PASS PC0");
 
-        program_counter = 32'd1;
+        program_counter = 32'd4;
 
         #10;
 
@@ -33,7 +33,7 @@ module tb_InstructionMemory;
         else
             $display("PASS PC1");
 
-        program_counter = 32'd2;
+        program_counter = 32'd8;
 
         #10;
 
@@ -42,7 +42,7 @@ module tb_InstructionMemory;
         else
             $display("PASS PC2");
 
-        program_counter = 32'd3;
+        program_counter = 32'd12;
 
         #10;
 
@@ -51,7 +51,7 @@ module tb_InstructionMemory;
         else
             $display("PASS PC3");
 
-        program_counter = 32'hFFFFFF04;
+        program_counter = 32'd16;
 
         #10;
 
