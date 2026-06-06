@@ -20,6 +20,10 @@ module alu (
             4'd7: s = $signed(a) >>> b[4:0]; //sra
             4'd8: s = ($signed(a) < $signed(b)) ? 1 : 0; //slt
             4'd9: s = ($unsigned(a) < $unsigned(b)) ? 1 : 0; //sltu
+            4'd10: s = (a == b) ? 1 : 0; //beq
+            4'd11: s = (a != b) ? 1 : 0; //bne
+            4'd12: s = ($signed(a) >= $signed(b)) ? 1 : 0; //bge
+            4'd13: s = ($unsigned(a) >= $unsigned(b)) ? 1 : 0; //bgeu
             default: s = 32'd0;
         endcase
     end
