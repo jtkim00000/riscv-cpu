@@ -1,5 +1,5 @@
 $date
-	Thu Jun  4 03:21:55 2026
+	Sat Jun  6 00:55:07 2026
 $end
 $version
 	Icarus Verilog
@@ -17,10 +17,17 @@ $var reg 1 & we $end
 $scope module test_data_memory $end
 $var wire 32 ' addr [31:0] $end
 $var wire 1 # clk $end
+$var wire 1 ( num_bytes $end
 $var wire 1 $ re $end
-$var wire 32 ( wdata [31:0] $end
+$var wire 32 ) wdata [31:0] $end
 $var wire 1 & we $end
-$var reg 32 ) rdata [31:0] $end
+$var reg 32 * rdata [31:0] $end
+$scope begin $ivl_for_loop0 $end
+$var integer 32 + i [31:0] $end
+$upscope $end
+$scope begin $ivl_for_loop1 $end
+$var integer 32 , i [31:0] $end
+$upscope $end
 $upscope $end
 $upscope $end
 $enddefinitions $end
@@ -29,8 +36,11 @@ $dumpall
 $end
 #0
 $dumpvars
-bx )
-b101010 (
+bx ,
+bx +
+bx *
+b101010 )
+z(
 b1111 '
 1&
 b101010 %
@@ -40,6 +50,7 @@ b1111 "
 bx !
 $end
 #5000
+b0 +
 1$
 0&
 1#
@@ -113,7 +124,7 @@ $end
 0#
 #175000
 b1000011 %
-b1000011 (
+b1000011 )
 b101010 "
 b101010 '
 1&
@@ -141,7 +152,7 @@ b101010 '
 0#
 #225000
 b1100100 %
-b1100100 (
+b1100100 )
 b1111 "
 b1111 '
 1#
