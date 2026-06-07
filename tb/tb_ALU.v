@@ -185,7 +185,83 @@ module tb_ALU;
             $display("FAIL SLTU neg: expected 1, got %0d", s);
         else
             $display("PASS SLTU neg");
+
+        //eq
+        a = 32'd12; b = 32'd12; sel = 4'd10;
+        #10;
+        if (s !== 32'd1)
+            $display("FAIL EQ1: expected 1, got %0d", s);
+        else
+            $display("PASS EQ1");
+
+        a = 32'd8; b = 32'hF0000000; sel = 4'd10;
+        #10;
+        if (s !== 32'd0)
+            $display("FAIL EQ0: expected 0, got %0d", s);
+        else
+            $display("PASS EQ0");
+
+        //neq
+        a = 32'd8; b = 32'd99; sel = 4'd11;
+        #10;
+        if (s !== 32'd1)
+            $display("FAIL NEQ1: expected 1, got %0d", s);
+        else
+            $display("PASS NEQ1");
+
+        a = 32'd42; b = 32'd42; sel = 4'd11;
+        #10;
+        if (s !== 32'd0)
+            $display("FAIL NEQ0: expected 0, got %0d", s);
+        else
+            $display("PASS NEQ0");
+
+        //bge
+        a = 32'd8; b = 32'd10; sel = 4'd12;
+        #10;
+        if (s !== 32'd0)
+            $display("FAIL BGE: expected 0, got %0d", s);
+        else
+            $display("PASS BGE");
+
+        a = 32'd8; b = 32'd8; sel = 4'd12;
+        #10;
+        if (s !== 32'd1)
+            $display("FAIL BGE equal: expected 1, got %0d", s);
+        else
+            $display("PASS BGE equal");
+
+        a = 32'd8; b = 32'hF0000000; sel = 4'd12;
+        #10;
+        if (s !== 32'd1)
+            $display("FAIL BGE neg: expected 1, got %0d", s);
+        else
+            $display("PASS BGE neg");
+
+        //bge
+        a = 32'd8; b = 32'd10; sel = 4'd13;
+        #10;
+        if (s !== 32'd0)
+            $display("FAIL BGEU: expected 0, got %0d", s);
+        else
+            $display("PASS BGEU");
+
+        a = 32'd8; b = 32'd8; sel = 4'd13;
+        #10;
+        if (s !== 32'd1)
+            $display("FAIL BGEU equal: expected 1, got %0d", s);
+        else
+            $display("PASS BGEU equal");
+
+        a = 32'd8; b = 32'hF0000000; sel = 4'd13;
+        #10;
+        if (s !== 32'd0)
+            $display("FAIL BGEU neg: expected 0, got %0d", s);
+        else
+            $display("PASS BGEU neg");
+        
         $finish;
+
     end
 
 endmodule;
