@@ -2,7 +2,8 @@ module data_memory (
     input clk,
     input we, //write enable
     input re, //read enable
-    input num_bytes,
+    input sr, //SEXT vs ~ZEXT
+    input [2:0] num_bytes, // 00 = 1 byte, 01 = 2 bytes, 3 bytes not used, 11 = 4 bytes
     input [31:0] addr,
     input [31:0] wdata,
     output reg [31:0] rdata
@@ -12,8 +13,13 @@ module data_memory (
 
     always @(*) begin
         if(re) begin
-            for(integer i = 0; i < num_bytes; i++) begin
-                rdata[i*8 +: 8] = data_memory[addr[7:0] + i];
+            for(integer i = 0; i < 4; i++) begin
+                if(i < (num_bytes+1))
+                    rdata[i*8 +: 8] = data_memory[addr[7:0] + i];
+                else if (sr)
+                    rdata[i*8 +: 8] = {8{data_memory[addr[7:0] + num_bytes][7]}};
+                else
+                    rdata[i*8 +: 8] = 8'h00;
             end
         end
     end
