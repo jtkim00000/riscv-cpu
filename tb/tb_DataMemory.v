@@ -2,7 +2,8 @@
 
 module tb_DataMemory;
 
-    reg clk, we, re;
+    reg clk, we, re, sr;
+    reg [1:0] num_bytes;
     reg [31:0] addr, wdata;
 
     wire [31:0] rdata;
@@ -11,6 +12,8 @@ module tb_DataMemory;
         .clk(clk),
         .we(we),
         .re(re),
+        .sr(sr),
+        .num_bytes(num_bytes),
         .addr(addr),
         .wdata(wdata),
         .rdata(rdata)
@@ -22,6 +25,7 @@ module tb_DataMemory;
         clk = 1'b0;
         we = 1'b0;
         re = 1'b0;
+        num_bytes = 2'b11;
 
         $dumpfile("sim/data_memory.vcd");
         $dumpvars(0, tb_DataMemory);
@@ -104,6 +108,33 @@ module tb_DataMemory;
         re = 1'b0;
 
         @(posedge clk);
+
+        //testing SEXT and ZEXT
+        we = 1'b1; addr = 32'd2; wdata = 8'hFF; num_bytes = 2'b00; sr = 1'b1; //1 byte
+
+        @(posedge clk);
+
+        we = 1'b0; re = 1'b1;
+
+        @(posedge clk);
+
+        if(rdata != -32'd1)
+            $display("FAIL DATAMEM SEXT: expected -1, got %d");
+        else
+            $display("PASS DATAMEM SEXT");
+
+        re = 1'b0; sr = 1'b0;
+
+        @(posedge clk);
+
+        re = 1'b1;
+
+        @(posedge clk);
+
+        if(rdata != 32'd255)
+            $display("FAIL DATAMEM ZEXT: expected 255, got %d");
+        else
+            $display("PASS DATAMEM ZEXT");
 
 
 

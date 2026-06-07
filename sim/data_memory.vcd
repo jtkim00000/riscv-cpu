@@ -1,5 +1,5 @@
 $date
-	Sat Jun  6 00:55:07 2026
+	Sat Jun  6 21:49:38 2026
 $end
 $version
 	Icarus Verilog
@@ -11,22 +11,25 @@ $scope module tb_DataMemory $end
 $var wire 32 ! rdata [31:0] $end
 $var reg 32 " addr [31:0] $end
 $var reg 1 # clk $end
-$var reg 1 $ re $end
-$var reg 32 % wdata [31:0] $end
-$var reg 1 & we $end
+$var reg 2 $ num_bytes [1:0] $end
+$var reg 1 % re $end
+$var reg 1 & sr $end
+$var reg 32 ' wdata [31:0] $end
+$var reg 1 ( we $end
 $scope module test_data_memory $end
-$var wire 32 ' addr [31:0] $end
+$var wire 32 ) addr [31:0] $end
 $var wire 1 # clk $end
-$var wire 1 ( num_bytes $end
-$var wire 1 $ re $end
-$var wire 32 ) wdata [31:0] $end
-$var wire 1 & we $end
-$var reg 32 * rdata [31:0] $end
+$var wire 2 * num_bytes [1:0] $end
+$var wire 1 % re $end
+$var wire 1 & sr $end
+$var wire 32 + wdata [31:0] $end
+$var wire 1 ( we $end
+$var reg 32 , rdata [31:0] $end
 $scope begin $ivl_for_loop0 $end
-$var integer 32 + i [31:0] $end
+$var integer 32 - i [31:0] $end
 $upscope $end
 $scope begin $ivl_for_loop1 $end
-$var integer 32 , i [31:0] $end
+$var integer 32 . i [31:0] $end
 $upscope $end
 $upscope $end
 $upscope $end
@@ -36,28 +39,30 @@ $dumpall
 $end
 #0
 $dumpvars
+bx .
+bx -
 bx ,
-bx +
-bx *
-b101010 )
-z(
-b1111 '
-1&
-b101010 %
-0$
+b101010 +
+b11 *
+b1111 )
+1(
+b101010 '
+x&
+0%
+b11 $
 0#
 b1111 "
 bx !
 $end
 #5000
-b0 +
-1$
-0&
+b100 -
+1%
+0(
 1#
 #10000
 0#
 #15000
-0$
+0%
 1#
 #20000
 0#
@@ -118,21 +123,21 @@ b0 +
 #160000
 0#
 #165000
-0$
+0%
 1#
 #170000
 0#
 #175000
-b1000011 %
-b1000011 )
+b1000011 '
+b1000011 +
 b101010 "
-b101010 '
-1&
+b101010 )
+1(
 1#
 #180000
 0#
 #185000
-0&
+0(
 1#
 #190000
 0#
@@ -141,20 +146,21 @@ b101010 '
 #200000
 0#
 #205000
-1$
+b100 -
+1%
 1#
 #210000
 0#
 #215000
-0$
+0%
 1#
 #220000
 0#
 #225000
-b1100100 %
-b1100100 )
+b1100100 '
+b1100100 +
 b1111 "
-b1111 '
+b1111 )
 1#
 #230000
 0#
@@ -167,4 +173,37 @@ b1111 '
 #250000
 0#
 #255000
+1&
+b0 $
+b0 *
+b11111111 '
+b11111111 +
+b10 "
+b10 )
+1(
+1#
+#260000
+0#
+#265000
+b100 -
+1%
+0(
+1#
+#270000
+0#
+#275000
+0&
+0%
+1#
+#280000
+0#
+#285000
+b0xxxxxxxx !
+b0xxxxxxxx ,
+b100 -
+1%
+1#
+#290000
+0#
+#295000
 1#
