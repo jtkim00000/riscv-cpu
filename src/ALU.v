@@ -24,6 +24,7 @@ module alu (
             4'd11: s = (a != b) ? 1 : 0; //bne
             4'd12: s = ($signed(a) >= $signed(b)) ? 1 : 0; //bge
             4'd13: s = ($unsigned(a) >= $unsigned(b)) ? 1 : 0; //bgeu
+            4'd14: s = 32'd1; //For unconditional jumpsS 
             default: s = 32'd0;
         endcase
     end
