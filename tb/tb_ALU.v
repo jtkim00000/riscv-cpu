@@ -259,6 +259,14 @@ module tb_ALU;
             $display("FAIL BGEU neg: expected 0, got %0d", s);
         else
             $display("PASS BGEU neg");
+            
+        //Jumps
+        sel = 4'd14;
+        #10;
+        if (s !== 32'd1)
+            $display("FAIL JUMP: expected 1, got %0d", s);
+        else
+            $display("PASS JUMP neg");
         
         $finish;
 
