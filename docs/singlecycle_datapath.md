@@ -16,7 +16,7 @@ FENCE, EBRAKE, and ECALL instructions were not implemented.
 
 Below is a diagram of the datapath
 
-![single-cycle-datapath](docs/custom-riscv-singelcycle-datapath.png)
+![single-cycle-datapath](custom-riscv-single-cycle-datapath.png)
 
 ## Control Unit
 
