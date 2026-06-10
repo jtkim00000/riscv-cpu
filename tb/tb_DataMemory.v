@@ -2,7 +2,7 @@
 
 module tb_DataMemory;
 
-    reg clk, we, re, sr;
+    reg clk, we, sz;
     reg [1:0] num_bytes;
     reg [31:0] addr, wdata;
 
@@ -11,8 +11,7 @@ module tb_DataMemory;
     data_memory test_data_memory(
         .clk(clk),
         .we(we),
-        .re(re),
-        .sr(sr),
+        .sz(sz),
         .num_bytes(num_bytes),
         .addr(addr),
         .wdata(wdata),
@@ -24,7 +23,6 @@ module tb_DataMemory;
     initial begin
         clk = 1'b0;
         we = 1'b0;
-        re = 1'b0;
         num_bytes = 2'b11;
 
         $dumpfile("sim/data_memory.vcd");
@@ -35,7 +33,7 @@ module tb_DataMemory;
 
         @(posedge clk);
 
-        we = 1'b0; re = 1'b1;
+        we = 1'b0;
 
         @(posedge clk);
 
@@ -44,50 +42,16 @@ module tb_DataMemory;
         else
             $display("PASS DATAMEM WR");
 
-        re = 1'b0;
 
         repeat (15) @(posedge clk);
 
         // Retains value test
-        re = 1'b1; 
 
         if(rdata != 32'd42)
             $display("FAIL DATAMEM RETAIN: expected 42, got %d");
         else
             $display("PASS DATAMEM RETAIN");
 
-        re = 1'b0; 
-
-        @(posedge clk);
-
-        // Wrong read
-        we = 1'b1; addr = 32'd42; wdata = 32'd67;
-
-        @(posedge clk);
-
-        we = 1'b0; re = 1'b0;
-
-        @(posedge clk);
-
-        if(rdata != 32'd42)
-            $display("FAIL DATAMEM R1: expected 42, got %d");
-        else
-            $display("PASS DATAMEM R1");
-
-        re = 1'b0;
-
-        @(posedge clk);
-
-        re = 1'b1;
-
-        @(posedge clk);
-
-        if(rdata != 32'd67)
-            $display("FAIL DATAMEM R2: expected 67, got %d");
-        else
-            $display("PASS DATAMEM R2");
-
-        re = 1'b0;
 
         @(posedge clk);
 
@@ -96,7 +60,7 @@ module tb_DataMemory;
 
         @(posedge clk);
 
-        we = 1'b0; re = 1'b0;
+        we = 1'b0;
 
         @(posedge clk);
 
@@ -105,16 +69,14 @@ module tb_DataMemory;
         else
             $display("PASS DATAMEM W");
 
-        re = 1'b0;
-
         @(posedge clk);
 
         //testing SEXT and ZEXT
-        we = 1'b1; addr = 32'd2; wdata = 8'hFF; num_bytes = 2'b00; sr = 1'b1; //1 byte
+        we = 1'b1; addr = 32'd2; wdata = 8'hFF; num_bytes = 2'b00; sz = 1'b1; //1 byte
 
         @(posedge clk);
 
-        we = 1'b0; re = 1'b1;
+        we = 1'b0;
 
         @(posedge clk);
 
@@ -123,11 +85,10 @@ module tb_DataMemory;
         else
             $display("PASS DATAMEM SEXT");
 
-        re = 1'b0; sr = 1'b0;
+        sz = 1'b0;
 
         @(posedge clk);
 
-        re = 1'b1;
 
         @(posedge clk);
 

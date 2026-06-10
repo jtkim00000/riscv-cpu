@@ -9,14 +9,12 @@ module tb_ALU;
     reg [3:0] sel;
     //output wire
     wire [31:0] s;
-    wire zero;
 
     alu test_alu (
        .a(a),
        .b(b),
        .sel(sel),
-       .s(s),
-       .zero(zero) 
+       .s(s)
     );
 
     initial begin

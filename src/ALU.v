@@ -2,11 +2,8 @@ module alu (
     input [31:0] a,
     input [31:0] b,
     input [3:0] sel,
-    output reg [31:0] s,
-    output zero
+    output reg [31:0] s
     );
-
-    assign zero = (s == 32'd0);
 
     always @(*) begin
         case(sel)
