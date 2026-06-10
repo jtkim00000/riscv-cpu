@@ -42,7 +42,7 @@ module control_unit (
                         case(funct7)
                             7'd0: alu_sel = 4'b0000;
                             7'd32: alu_sel = 4'b0001;
-                            default: alu_sel = 4'b0000
+                            default: alu_sel = 4'b0000;
                         endcase
                     end
                     3'd4: alu_sel = 4'b0010;
@@ -53,7 +53,7 @@ module control_unit (
                         case(funct7)
                             7'd0: alu_sel = 4'b0110;
                             7'd32: alu_sel = 4'b0111;
-                            default: alu_sel = 4'b0000
+                            default: alu_sel = 4'b0000;
                         endcase
                     end
                     3'd2: alu_sel = 4'b1000;
@@ -76,7 +76,7 @@ module control_unit (
                         case(funct7)
                             7'd0: alu_sel = 4'b0110;
                             7'd32: alu_sel = 4'b0111;
-                            default: alu_sel = 4'b0000
+                            default: alu_sel = 4'b0000;
                         endcase
                     end
                     3'd2: alu_sel = 4'b1000;

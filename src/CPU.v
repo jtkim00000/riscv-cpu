@@ -6,15 +6,17 @@ module cpu (input clk);
     wire [31:0] wired_four, adder1_out, adder2_out;
 
     //Control signals
-    wire reg_en, alumux1, alumux2, we, sz, br_en, jump, jalr;
-    wire [1:0] regmux, num_bytes;
+    wire reg_en, alumux1_sel, alumux2_sel, we, sz, br_en, jump, jalr;
+    wire [1:0] regmux_sel, num_bytes;
     wire [3:0] alu_sel;
+
+    assign wired_four = 32'd4;
 
     alu alu (
         .a(alumux1_out),
         .b(alumux2_out),
         .sel(alu_sel),
-        .s(alu_out),
+        .s(alu_out)
     );
 
     data_memory data_memory (
@@ -58,7 +60,7 @@ module cpu (input clk);
         .a(pc_out),
         .b(brmux_out),
         .sel(4'b0000),
-        .s(adder1_out),
+        .s(adder1_out)
     );
 
     alu adder2 (
@@ -87,35 +89,35 @@ module cpu (input clk);
     );
 
     mux #(.DATA_WIDTH(32), .INPUT_WIDTH(2), .SELECT_BITS(1)) jalrmux (
-        .data_in({{alu_out[31:1], 1'b0}, alu_out})
+        .data_in({{alu_out[31:1], 1'b0}, alu_out}),
         .sel(jalr),
         .out(jalrmux_out)
     );
 
     mux #(.DATA_WIDTH(32), .INPUT_WIDTH(2), .SELECT_BITS(1)) alumux1 (
         .data_in({rs1_out, pc_out}),
-        .sel(alumux1),
+        .sel(alumux1_sel),
         .out(alumux1_out)
     );
 
     mux #(.DATA_WIDTH(32), .INPUT_WIDTH(2), .SELECT_BITS(1)) alumux2 (
         .data_in({imm_out, rs2_out}),
-        .sel(alumux2),
+        .sel(alumux2_sel),
         .out(alumux2_out)
     );
 
     mux #(.DATA_WIDTH(32), .INPUT_WIDTH(4), .SELECT_BITS(2)) regmux (
-        .data_in({imm_out, data_mem_out, alu_out, adder2_out})
-        .sel(regmux),
+        .data_in({imm_out, data_mem_out, alu_out, adder2_out}),
+        .sel(regmux_sel),
         .out(regmux_out)
     );
 
     control_unit control_unit (
         .instr(instr_out),
         .reg_en(reg_en),
-        .regmux(regmux),
-        .alumux1(alumux1),
-        .alumux2(alumux2),
+        .regmux(regmux_sel),
+        .alumux1(alumux1_sel),
+        .alumux2(alumux2_sel),
         .alu_sel(alu_sel),
         .jump(jump),
         .br_en(br_en),
