@@ -1,0 +1,142 @@
+$date
+	Tue Jun  9 22:39:31 2026
+$end
+$version
+	Icarus Verilog
+$end
+$timescale
+	1ps
+$end
+$scope module tb_MUX $end
+$var wire 16 ! out4 [15:0] $end
+$var wire 3 " out3 [2:0] $end
+$var wire 16 # out2 [15:0] $end
+$var reg 16 $ in1 [15:0] $end
+$var reg 16 % in2 [15:0] $end
+$var reg 16 & in3 [15:0] $end
+$var reg 3 ' in31 [2:0] $end
+$var reg 3 ( in32 [2:0] $end
+$var reg 3 ) in33 [2:0] $end
+$var reg 16 * in4 [15:0] $end
+$var reg 2 + sel [1:0] $end
+$var reg 2 , sel3 [1:0] $end
+$scope module test_mux_2 $end
+$var wire 32 - data_in [31:0] $end
+$var wire 1 . sel $end
+$var wire 16 / out [15:0] $end
+$var parameter 32 0 DATA_WIDTH $end
+$var parameter 32 1 INPUT_WIDTH $end
+$var parameter 32 2 SELECT_BITS $end
+$upscope $end
+$scope module test_mux_3 $end
+$var wire 9 3 data_in [8:0] $end
+$var wire 2 4 sel [1:0] $end
+$var wire 3 5 out [2:0] $end
+$var parameter 32 6 DATA_WIDTH $end
+$var parameter 32 7 INPUT_WIDTH $end
+$var parameter 32 8 SELECT_BITS $end
+$upscope $end
+$scope module test_mux_4 $end
+$var wire 64 9 data_in [63:0] $end
+$var wire 2 : sel [1:0] $end
+$var wire 16 ; out [15:0] $end
+$var parameter 32 < DATA_WIDTH $end
+$var parameter 32 = INPUT_WIDTH $end
+$var parameter 32 > SELECT_BITS $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+$comment Show the parameter values. $end
+$dumpall
+b10 >
+b100 =
+b10000 <
+b10 8
+b11 7
+b11 6
+b1 2
+b10 1
+b10000 0
+$end
+#0
+$dumpvars
+bx ;
+bx0 :
+b111000000000000000100000000000000000000000000101010 9
+bx 5
+bx0 4
+b111010 3
+b101010 /
+0.
+b101010 -
+bx ,
+bx0 +
+b111 *
+b0 )
+b111 (
+b10 '
+b1 &
+b0 %
+b101010 $
+b101010 #
+bx "
+bx !
+$end
+#10000
+b0 #
+b0 /
+1.
+bx1 +
+bx1 4
+bx1 :
+#20000
+b101010 #
+b101010 /
+0.
+b10 "
+b10 5
+b101010 !
+b101010 ;
+b0 +
+b0 4
+b0 :
+#30000
+b0 #
+b0 /
+1.
+b111 "
+b111 5
+b0 !
+b0 ;
+b1 +
+b1 4
+b1 :
+#40000
+b101010 #
+b101010 /
+0.
+b0 "
+b0 5
+b1 !
+b1 ;
+b10 +
+b10 4
+b10 :
+#50000
+b0 #
+b0 /
+1.
+bx "
+bx 5
+b111 !
+b111 ;
+b11 +
+b11 4
+b11 :
+#60000
+b0 ,
+#70000
+b1 ,
+#80000
+b10 ,
+#90000
