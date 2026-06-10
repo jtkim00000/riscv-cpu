@@ -3,7 +3,7 @@ module data_memory (
     input we, //write enable
     input re, //read enable
     input sr, //SEXT vs ~ZEXT
-    input [1:0] num_bytes, // 00 = 1 byte, 01 = 2 bytes, 3 bytes not used, 11 = 4 bytes
+    input [1:0] num_bytes, // 00 = 1 byte, 01 = 2 bytes, 3 bytes not used, 11 = 4 bytes(word)
     input [31:0] addr,
     input [31:0] wdata,
     output reg [31:0] rdata
