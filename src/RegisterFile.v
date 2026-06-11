@@ -14,6 +14,8 @@ module register_file(
     //not really gonna use the first one, but complicates to remove it
     reg [31:0] register [31:0];
 
+    initial register[0] = 32'd0;
+
     //read
     //async for single cycle reasons
     //turnary operator is used since we don't know the initial state of register[0]

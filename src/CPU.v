@@ -1,4 +1,4 @@
-module cpu (input clk);
+module cpu (input clk, input reset);
 
     //Wires inbetween components
     wire [31:0] data_mem_out, alu_out, rs1_out, rs2_out, instr_out, imm_out, pc_out;
@@ -47,6 +47,7 @@ module cpu (input clk);
 
     program_counter pc (
         .clk(clk),
+        .reset(reset),
         .wdata(jumpmux_out),
         .rdata(pc_out)
     );
