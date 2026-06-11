@@ -1,0 +1,3 @@
+lui x1,0x00000 # pc = 0
+
+auipc x1, 1 # pc = 4
