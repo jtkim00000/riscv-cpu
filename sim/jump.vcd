@@ -1,0 +1,72 @@
+$date
+	Thu Jun 11 02:53:46 2026
+$end
+$version
+	Icarus Verilog
+$end
+$timescale
+	1ps
+$end
+$scope module Jump $end
+$var reg 1 ! clk $end
+$var reg 1 " reset $end
+$var integer 32 # errors [31:0] $end
+$var integer 32 $ i [31:0] $end
+$upscope $end
+$enddefinitions $end
+$comment Show the parameter values. $end
+$dumpall
+$end
+#0
+$dumpvars
+bx $
+bx #
+1"
+0!
+$end
+#5000
+1!
+#6000
+0"
+#10000
+0!
+#15000
+1!
+#20000
+0!
+#25000
+1!
+#30000
+0!
+#35000
+1!
+#40000
+0!
+#45000
+1!
+#50000
+0!
+#55000
+1!
+#60000
+0!
+#65000
+1!
+#70000
+0!
+#75000
+1!
+#80000
+0!
+#85000
+1!
+#90000
+0!
+#95000
+1!
+#100000
+0!
+#105000
+b11 $
+b0 #
+1!
