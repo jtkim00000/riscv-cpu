@@ -8,7 +8,7 @@ module instruction_memory (
 
     // Load program
     initial begin
-        $readmemh("prog/cpu_test_load_store.hex", instruction_memory, 8'd0);
+        $readmemh("prog/cpu_test_branch.hex", instruction_memory, 8'd0);
     end
 
     //using 32-bit word size, but using the higher bits of pc
