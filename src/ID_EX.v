@@ -7,6 +7,7 @@ module id_ex (
     input [31:0] RS1D,
     input [31:0] RS2D,
     input [31:0] PCPlus4D,
+    input [31:0] InstrD,
     //ControlSignalsD
     input [1:0] REG_MUX_D,
     input REG_EN_D,
@@ -24,6 +25,7 @@ module id_ex (
     output reg [31:0] RS1E,
     output reg [31:0] RS2E,
     output reg [31:0] PCPlus4E,
+    output reg [31:0] InstrE,
     //ControlSignalsE
     output reg [1:0] REG_MUX_E,
     output reg REG_EN_E,
@@ -45,6 +47,7 @@ module id_ex (
             RS1E <= 32'd0;
             RS2E <= 32'd0;
             PCPlus4E <= 32'd0;
+            InstrE <= 32'd0;
 
             REG_MUX_E <= 2'd0;
             REG_EN_E <= 1'd0;
@@ -64,6 +67,7 @@ module id_ex (
             RS1E <= RS1D;
             RS2E <= RS2D;
             PCPlus4E <= PCPlus4D;
+            InstrE <= InstrD;
 
             REG_MUX_E <= REG_MUX_D;
             REG_EN_E <= REG_EN_D;
