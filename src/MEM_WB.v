@@ -24,7 +24,7 @@ module mem_wb (
             ALUW <= 32'd0;
             MEMW <= 32'd0;
             PCPlus4W <= 32'd0;
-            InstrW ,= 32'd0;
+            InstrW <= 32'd0;
 
             REG_MUX_W <= 2'd0;
             REG_EN_W <= 1'd0;
