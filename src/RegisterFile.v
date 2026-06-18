@@ -1,4 +1,3 @@
-
 module register_file(
     input clk, 
     input we,
