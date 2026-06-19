@@ -273,7 +273,7 @@ module p_cpu (input clk, input reset);
     // WRITEBACK
 
     mux #(.DATA_WIDTH(32), .INPUT_WIDTH(4), .SELECT_BITS(2)) writebackmux (
-        .data_in({ImmW, ALUW, MEMW, PCPlus4W}),
+        .data_in({ImmW, MEMW, ALUW, PCPlus4W}),
         .sel(REG_MUX_W),
         .out(WBDataW)
     );

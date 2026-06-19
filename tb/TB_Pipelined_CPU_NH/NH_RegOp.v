@@ -41,7 +41,7 @@ module NH_RegOp;
         clk = 1'b0;
 
         $dumpfile("sim/nh_reg_op.vcd");
-        $dumpvars(1, NH_RegOp);
+        $dumpvars(1, NH_RegOp.test_cpu, NH_RegOp);
 
         reset = 1'b1;
 
@@ -49,7 +49,7 @@ module NH_RegOp;
 
         reset = 1'b0;
 
-        repeat(100) @(posedge clk);
+        repeat(50) @(posedge clk);
 
         errors = 0;
 

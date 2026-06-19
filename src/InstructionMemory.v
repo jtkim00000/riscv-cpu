@@ -8,7 +8,7 @@ module instruction_memory (
 
     // Load program
     initial begin
-        $readmemh("prog/nh_pipelined_test_lui.hex", instruction_memory, 8'd0);
+        $readmemh("prog/nh_pipelined_test_reg_op.hex", instruction_memory, 8'd0);
     end
 
     //using 32-bit word size, but using the higher bits of pc

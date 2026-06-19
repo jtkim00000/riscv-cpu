@@ -30,7 +30,7 @@ module NH_LUI;
         clk = 1'b0;
 
         $dumpfile("sim/nh_lui.vcd");
-        $dumpvars(1, NH_LUI);
+        $dumpvars(1, NH_LUI.test_cpu, NH_LUI);
 
         reset = 1'b1;
 
@@ -38,7 +38,7 @@ module NH_LUI;
 
         reset = 1'b0;
 
-        repeat(50) @(posedge clk);
+        repeat(15) @(posedge clk);
 
         errors = 0;
 
