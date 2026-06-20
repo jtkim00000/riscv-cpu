@@ -1,0 +1,70 @@
+$date
+	Sat Jun 20 01:37:22 2026
+$end
+$version
+	Icarus Verilog
+$end
+$timescale
+	1ps
+$end
+$scope module tb_ForwardingUnit $end
+$var wire 2 ! RS2_MUX [1:0] $end
+$var wire 2 " RS1_MUX [1:0] $end
+$var reg 32 # InstrE [31:0] $end
+$var reg 32 $ InstrM [31:0] $end
+$var reg 32 % InstrW [31:0] $end
+$var reg 1 & REG_EN_M $end
+$var reg 1 ' REG_EN_W $end
+$scope module test_forwarding_unit $end
+$var wire 32 ( InstrE [31:0] $end
+$var wire 32 ) InstrM [31:0] $end
+$var wire 32 * InstrW [31:0] $end
+$var wire 1 & REG_EN_M $end
+$var wire 1 ' REG_EN_W $end
+$var reg 2 + RS1_MUX [1:0] $end
+$var reg 2 , RS2_MUX [1:0] $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+$comment Show the parameter values. $end
+$dumpall
+$end
+#0
+$dumpvars
+b0 ,
+b1 +
+bx00011xxxxxxx *
+bx00101xxxxxxx )
+bx00101xxxxxxxxxxxxxxx (
+1'
+1&
+bx00011xxxxxxx %
+bx00101xxxxxxx $
+bx00101xxxxxxxxxxxxxxx #
+b1 "
+b0 !
+$end
+#10000
+b10 !
+b10 ,
+bx0001100101xxxxxxxxxxxxxxx #
+bx0001100101xxxxxxxxxxxxxxx (
+#20000
+b0 !
+b0 ,
+b0 "
+b0 +
+0'
+0&
+#30000
+b1 "
+b1 +
+1'
+1&
+bx00010xxxxxxx %
+bx00010xxxxxxx *
+bx00010xxxxxxx $
+bx00010xxxxxxx )
+bx0001100010xxxxxxxxxxxxxxx #
+bx0001100010xxxxxxxxxxxxxxx (
+#40000
