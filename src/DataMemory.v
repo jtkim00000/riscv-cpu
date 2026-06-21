@@ -8,14 +8,14 @@ module data_memory (
     output reg [31:0] rdata
 );
     // Smaller size for simulation
-    reg [7:0] data_memory [0:255];
+    reg [7:0] data_memory [0:2048];
     reg sign_bit;
 
     always @(*) begin
         for(integer i = 0; i < 4; i++) begin
             if(i < ($unsigned(num_bytes + 1))) begin
-                rdata[i*8 +: 8] = data_memory[addr[7:0] + i];
-                sign_bit = data_memory[addr[7:0] + i][7];
+                rdata[i*8 +: 8] = data_memory[addr[9:0] + i];
+                sign_bit = data_memory[addr[9:0] + i][7];
             end
             else if (sz)
                 rdata[i*8 +: 8] = {8{sign_bit}};
@@ -27,7 +27,7 @@ module data_memory (
     always @(posedge clk) begin
         if(we) begin
             for(integer i = 0; i < ($unsigned(num_bytes+1)); i++) begin
-                data_memory[addr[7:0] + i] = wdata[i*8 +: 8];
+                data_memory[addr[9:0] + i] = wdata[i*8 +: 8];
             end
         end
     end

@@ -5,8 +5,8 @@ module register_file(
     input [4:0] raddr2, //32 registers so 5 bits
     input [4:0] waddr, //address to write to
     input [31:0] wdata, //data to write
-    output [31:0] rdata1, //data read
-    output [31:0] rdata2
+    output reg [31:0] rdata1, //data read
+    output reg [31:0] rdata2
 );
 
     //32 registers
@@ -18,8 +18,17 @@ module register_file(
     //read
     //async for single cycle reasons
     //turnary operator is used since we don't know the initial state of register[0]
-    assign rdata1 = (raddr1 == 5'd0) ? 32'd0 : register[raddr1];
-    assign rdata2 = (raddr2 == 5'd0) ? 32'd0 : register[raddr2];
+    always @(*) begin
+        if(raddr1 == waddr && we && waddr != 5'd0) begin
+            rdata1 = wdata;
+        end
+        else
+            rdata1 = (raddr1 == 5'd0) ? 32'd0 : register[raddr1];
+        if(raddr2 == waddr && we && waddr != 5'd0)
+            rdata2 = wdata;
+        else
+            rdata2 = (raddr2 == 5'd0) ? 32'd0 : register[raddr2];
+    end
 
     //write
     always @(posedge clk) begin
