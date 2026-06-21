@@ -1,0 +1,13 @@
+lui x1,0x00000 # pc = 0
+lui x2,0x00000 # pc = 4
+
+jal x1, 8
+lui x1,0x00001 # pc = 0
+addi x0, x0, 0
+addi x0, x0, 0
+addi x0, x0, 0
+addi x0, x0, 0
+addi x0, x0, 0
+jalr x2, 24(x2)
+lui x2,0x00001 # pc = 0
+
