@@ -1,0 +1,57 @@
+$date
+	Sat Jun 20 22:23:13 2026
+$end
+$version
+	Icarus Verilog
+$end
+$timescale
+	1ps
+$end
+$scope module tb_StallingUnit $end
+$var wire 1 ! PCMUX $end
+$var wire 1 " InstrMUX $end
+$var reg 32 # InstrD [31:0] $end
+$var reg 32 $ InstrF [31:0] $end
+$scope module test_stalling_unit $end
+$var wire 32 % InstrD [31:0] $end
+$var wire 32 & InstrF [31:0] $end
+$var reg 1 " InstrMUX $end
+$var reg 1 ! PCMUX $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+$comment Show the parameter values. $end
+$dumpall
+$end
+#0
+$dumpvars
+bx0001100011xxxxxxxxxxxxxxx &
+bx000110000000 %
+bx0001100011xxxxxxxxxxxxxxx $
+bx000110000000 #
+0"
+0!
+$end
+#10000
+bx0000000000xxxxxxxxxxxxxxx $
+bx0000000000xxxxxxxxxxxxxxx &
+bx000000000011 #
+bx000000000011 %
+#20000
+1"
+1!
+bx0000000101xxxxxxxxxxxxxxx $
+bx0000000101xxxxxxxxxxxxxxx &
+bx001010000011 #
+bx001010000011 %
+#30000
+bx0011100101xxxxxxxxxxxxxxx $
+bx0011100101xxxxxxxxxxxxxxx &
+bx001110000011 #
+bx001110000011 %
+#40000
+0"
+0!
+bx010010000011 #
+bx010010000011 %
+#50000
