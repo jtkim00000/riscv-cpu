@@ -3,7 +3,8 @@ module p_cpu (input clk, input reset);
     // ==================== WIRES ====================
 
     // INSTRUCION FETCH
-    wire [31:0] PCMUX_OUT, PCF, WIRED4_F, InstrF, PCPlus4F;
+    wire [31:0] PCMUX_OUT, PCF, WIRED4_F, InstrF, PCPlus4F, InstrMUX_OUT, NOP;
+    wire PCMUX, InstrMUX;
 
     // INSTRUCTION DECODE
     wire [31:0] PCD, InstrD, PCPlus4D, ImmD, RS1D, RS2D;
@@ -33,6 +34,8 @@ module p_cpu (input clk, input reset);
     wire ALUMUX1_E;
     wire ALUMUX2_E;
     wire BR_EN_E;
+    wire [1:0] RS1MUX, RS2MUX;
+    wire [31:0] RS1MUX_OUT, RS2MUX_OUT;
 
     // MEMORY
     wire [31:0] ImmM, ALUM, RS2M, PCPlus4M, MEMM, InstrM;
@@ -41,6 +44,7 @@ module p_cpu (input clk, input reset);
     wire WE_M;
     wire SZ_M;
     wire [1:0] NUM_BYTES_M;
+    wire [31:0] WBMEMMUX_OUT;
 
     // WRITEBACK
     wire [31:0] ImmW, ALUW, MEMW, PCPlus4W, WBDataW, InstrW;
@@ -52,6 +56,8 @@ module p_cpu (input clk, input reset);
     // iNSTRUCTION FETCH
 
     assign WIRED4_F = 32'd4;
+
+    assign NOP = 32'd0;
 
     program_counter program_counter (
         .clk(clk),
@@ -72,10 +78,23 @@ module p_cpu (input clk, input reset);
         .s(PCPlus4F)
     );
 
-    mux #(.DATA_WIDTH(32), .INPUT_WIDTH(2), .SELECT_BITS(1)) pcmux (
-        .data_in({CTAddrE, PCPlus4F}),
-        .sel(FLUSH_E),
+    mux #(.DATA_WIDTH(32), .INPUT_WIDTH(4), .SELECT_BITS(2)) pcmux (
+        .data_in({CTAddrE, CTAddrE, PCF, PCPlus4F}),
+        .sel({FLUSH_E, PCMUX}),
         .out(PCMUX_OUT)
+    );
+
+    mux #(.DATA_WIDTH(32), .INPUT_WIDTH(2), .SELECT_BITS(1)) instrmux (
+        .data_in({NOP, InstrF}),
+        .sel(InstrMUX),
+        .out(InstrMUX_OUT)
+    );
+
+    stalling_unit stalling_unit (
+        .InstrF(InstrF),
+        .InstrD(InstrD),
+        .PCMUX(PCMUX),
+        .InstrMUX(InstrMUX)
     );
 
     // IF/ID REGISTER
@@ -85,7 +104,7 @@ module p_cpu (input clk, input reset);
         .FLUSH_E(FLUSH_E),
         .reset(reset),
         .PCF(PCF),
-        .InstrF(InstrF),
+        .InstrF(InstrMUX_OUT),
         .PCPlus4F(PCPlus4F),
         .PCD(PCD),
         .InstrD(InstrD),
@@ -171,14 +190,26 @@ module p_cpu (input clk, input reset);
 
     assign FLUSH_E = JUMP_E | (BR_EN_E & ALUE[0]);
 
+    mux #(.DATA_WIDTH(32), .INPUT_WIDTH(3), .SELECT_BITS(2)) rs1mux (
+        .data_in({WBDataW, WBMEMMUX_OUT, RS1E}),
+        .sel(RS1MUX),
+        .out(RS1MUX_OUT)
+    );
+
+    mux #(.DATA_WIDTH(32), .INPUT_WIDTH(3), .SELECT_BITS(2)) rs2mux (
+        .data_in({WBDataW, WBMEMMUX_OUT, RS2E}),
+        .sel(RS2MUX),
+        .out(RS2MUX_OUT)
+    );
+
     mux #(.DATA_WIDTH(32), .INPUT_WIDTH(2), .SELECT_BITS(1)) alumux1 (
-        .data_in({RS1E, PCE}),
+        .data_in({RS1MUX_OUT, PCE}),
         .sel(ALUMUX1_E),
         .out(ALUMUX1_OUT)
     );
 
     mux #(.DATA_WIDTH(32), .INPUT_WIDTH(2), .SELECT_BITS(1)) alumux2 (
-        .data_in({ImmE, RS2E}),
+        .data_in({ImmE, RS2MUX_OUT}),
         .sel(ALUMUX2_E),
         .out(ALUMUX2_OUT)
     );
@@ -217,7 +248,7 @@ module p_cpu (input clk, input reset);
         .reset(reset),
         .ImmE(ImmE),
         .ALUE(ALUE),
-        .RS2E(RS2E),
+        .RS2E(RS2MUX_OUT),
         .PCPlus4E(PCPlus4E),
         .InstrE(InstrE),
         .REG_MUX_E(REG_MUX_E),
@@ -270,12 +301,29 @@ module p_cpu (input clk, input reset);
         .REG_EN_W(REG_EN_W)
     );
 
+    mux #(.DATA_WIDTH(32), .INPUT_WIDTH(4), .SELECT_BITS(2)) wbmemmux (
+        .data_in({ImmM, MEMM, ALUM, PCPlus4M}),
+        .sel(REG_MUX_M),
+        .out(WBMEMMUX_OUT)
+    );
+
     // WRITEBACK
 
     mux #(.DATA_WIDTH(32), .INPUT_WIDTH(4), .SELECT_BITS(2)) writebackmux (
         .data_in({ImmW, MEMW, ALUW, PCPlus4W}),
         .sel(REG_MUX_W),
         .out(WBDataW)
+    );
+
+    // OTHER COMPONENTS
+    forwarding_unit forwarding_unit (
+        .InstrE(InstrE),
+        .InstrM(InstrM),
+        .InstrW(InstrW),
+        .REG_EN_M(REG_EN_M),
+        .REG_EN_W(REG_EN_W),
+        .RS1_MUX(RS1MUX),
+        .RS2_MUX(RS2MUX)
     );
 
 
