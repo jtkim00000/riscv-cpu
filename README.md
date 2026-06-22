@@ -1,6 +1,13 @@
 # Pipelined RISC-V CPU
 
-This document is an indepth description and documentation of the Pipelined RISC-V CPU, an original personal project
+This document is an indepth description and documentation of the Pipelined RISC-V CPU that I designed and built from scratch.
+
+If interested, check out my other project, LC-3 CPU: https://github.com/jtkim00000/lc3-cpu
+
+All hand-assembled machine code programs that I used to verify CPU functionality can be found at:
+- docs/single_cycle_tests
+- docs/no_hazard_pipelined_tests
+- docs/hazard_pipelined_tests
 
 ## Table of Contents
 - [Overview](#overview)
@@ -15,6 +22,9 @@ This document is an indepth description and documentation of the Pipelined RISC-
   - [Other](#other)
   - [Control Unit Design](#control-unit-design)
 - [Pipelining a CPU](#pipelining-a-cpu)
+  - [5-Stage Pipeline](#5-stage-pipeline)
+  - [Pipeline Hazards and Resolution Techniques](#pipeline-hazards-and-resolution-techniques)
+  - [Verification](#verification)
 - [Future Plans](#future-plans)
 
 ## Overview
@@ -143,7 +153,7 @@ Notice how since the instruction formats fix the positions of rs1, rs2, and rd, 
 ### Register-Immediate Operation
 All Register-Immediate Operations (RIO) can be done using the same ALU that we built for the RRO. We simply need to replace the rs2 input with an immediate value. We also need to generate an immediate value based on the instruction format. The logical solution is to use a multiplexer (mux).
 
-![immop1](docs/images/RegImm1.png)
+![immop1](docs/images/ImmOp1.png)
 
 ### Loads and Stores
 Both Load and Store instructions require roughly similar hardware additions to be function. The main component is a Data Memory. One again, both Instruction and Data Memory have 8-bit addressability, but RISC-V has a 32-bit word size, meaning we must make some sort of decision about endianess. For both memories I chose to implement Big Endian. It is also important to note that since the Data and Instruction Memory are seperate components, this CPU follows Harvard Architecture, as opposed to Von Neumann Architecture.
@@ -187,5 +197,68 @@ Below is the complete single-cycle datapath:
 ![single-cycle-datapath](docs/images/custom-riscv-single-cycle-datapath.png)
 
 ## Pipelining a CPU
+One important drawback of the single-cycle CPU is that every single instruction is require to complete in a singular clock cycle. This means that you are bottlenecked by your slowest instruction. The advantage of multi-cycle CPUs like the LC-3 CPU, is that the CPU can immediate go back to the `FETCH` state after execution finishes. Hoewever, one advantage of this single-cycle CPU is that it is relatively straightforward to pipeline.
+
+You may have noticed that for each instruction ran on the single-cycle CPU, they all follow a similar procedure. First we fetch the instruction by reading the address given by PC in the Instruction memory. Then we take this instruction and put it through the control unit, immediate generator, and register file, generating a variety of outputs. Then we potentially perform some sort of arithmetic or logic operation on these outputs. Then we potentially do a store or load from memory using the output from the ALU. And finaly we writeback values to the register file. 
+
+Since each of these steps is performed one after the other and not at the same time, we can perform these steps on multiple instructions at once. As one instruction fetches, another decodes, etc.
+
+### 5-stage Pipeline
+The different "steps" described above are classified as the following stages:
+- Instruction Fetch (IF)
+- Instruction Decode (ID)
+- Execute (EX)
+- Memory (MEM)
+- Writeback (WB)
+
+By spreading instructions across these 5 stages and running them all at once, we can achieve a maximum speedup of 5x. However, this number is almost never true since not all instructions require every stage, for example, Register-Register Operations are essentially doing nothing in the MEM stage. Additionally, jumps, branches, and specific hazards will also reduce speed, as I will discuss later in this document. 
+
+To implement this pipeline, intermediate registers IF/ID, ID/EX, etc. are place inbetween stages, and all data that passes through components in different stages are now stored in these intermediate registers each clock cycle. This allows the information from each stage to relate to a different instruction, allowing for the pipeline. 
+
+One thing to note is that your pipeline is constantly fetch the next instruction at `PC + 4`, however, if you are branching or jumping, `PC+4` is not always the next instruction to be executed. Therefore, a flush mechanic needs to be implemented. 
+
+In my single-cycle CPU, I found that the earliest a branch/flush can be determined is in the EX state, meaning the IF and ID state would potentially have improper instructions loaded. Therefore, the IF/ID and ID/EX registers need a flush input, which resets all data stored in them whenever a branch or jump is taken. 
+
+Modern CPUs have advanced branch prediction to limit flushing. However, for this implementation I opted to go for a simpler design that simply predicts that a branch/jump is not taken, filling up the pipeline with potentially improper instructions, and then flushing those register if the branch happens to be taken. This does mean that every time a jump is taken the pipeline is gauranteed to fill up with improper instruction, however I opted for this design to maintain simplicity.
+
+The pipelined CPU described above is shown below:
+![custom-riscv-pipelined-datapath](docs/images/custom-riscv-pipelined-datapath.png)
+
+### Pipeline Hazards and Resolution Techniques
+The 5-stage Pipeline design also presents potential errors. For example given the following program:
+
+`ADD x1, x3, x5`
+
+`ADD x2, x1, x4`
+
+Notice how the second `ADD` instruction uses register `x1`, which is the rd for the previous `ADD` instruction. However, by the time the second instruction is the EX stage, where it performs a computation using x1, the previous instruction is only at the MEM stage, meaning the new computed `x1` value has yet to be written back into the register file. This is an example of a hazard.
+
+For this pipeline design, there are multiple hazards. Firstly, hazards like the example above, where the value need in the EX stage has been computed but is in the MEM stage. This happens when the dependent instruction is seperated from the root instruction by 1.
+
+There is another hazard similar to this one, where the computed value is in the WB stage. This happens when the dependent instruction is seperated from the root instruction by 2. 
+
+The two hazards described can be solve using forwarding, where the computed values from the MEM and WB stage are inserted into the EX when a Forwarding Unit detects that either rs1 or rs2 match the rd from the MEM and WB stage. 
+
+Another error can happen if a write and read to the same register in the Register File are done at the same time, but the read happens first. This will create a hazard when the dependent instruction is seperated from the root instruction by 3. We can solve this hazard by forcing the write to happen first when this scenario occurs, called write-through.
+
+Finally, the last hazard occurs under the following scenario:
+
+`lhu x14, 1(x5)`
+
+`addi x15, x14, 12`
+
+In this case a load instruction stores a value into `x14`, and the instruction directly after uses that `x14` value. This is an important distinction to previous errors. Since the computed `x14` value will only be avaliable once the MEM stage is completed, if these instructions go through the pipeline consecutively, the ADDI instruction will require the `x14` value in the EX stage, before the register value is obtained. 
+
+This means we need at least one instruction between these two that does nothing for forwarding to be applicable. In this scenario, a Stalling Unit, will detect this hazard, freezing the PC and inserting an NOP instruction into the pipeline for one clock cycle while allowing the load instruction to continue through the pipeline. This will create a "bubble" or empty instruction between the two such that forwarding can now be applied. 
+
+The final pipeline with full hazard resolution is shown below:
+![RISCV_CPU_Datapath_Final](docs/images/RISCV_CPU_Datapath_Final.png)
+
+### Verification
+
+
 
 ## Future Plans
+During the fall I plan to implement this CPU onto an FPGA.
+
+I am considering attemping to build an Out-Of-Order Pipelined RISC-V CPU in the following years. 
