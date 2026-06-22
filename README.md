@@ -9,14 +9,13 @@ This document is an indepth description and documentation of the Pipelined RISC-
   - [RV32I ISA](#rv32i-isa)
   - [Register-Register Operation](#register-register-operation)
   - [Register-Immediate Operation](#register-immediate-operation)
-  - [Load](#load)
-  - [Store](#store)
+  - [Loads and Stores](#loads-and-stores)
   - [Branch](#branch)
   - [Jump](#jump)
   - [Other](#other)
   - [Control Unit Design](#control-unit-design)
-- [Pipelining a CPU](#pipelined)
-- [Future Plans](#future)
+- [Pipelining a CPU](#pipelining-a-cpu)
+- [Future Plans](#future-plans)
 
 ## Overview
 
@@ -142,30 +141,51 @@ Notice how since the instruction formats fix the positions of rs1, rs2, and rd, 
 ![regop3](docs/images/RegOp3.png)
 
 ### Register-Immediate Operation
+All Register-Immediate Operations (RIO) can be done using the same ALU that we built for the RRO. We simply need to replace the rs2 input with an immediate value. We also need to generate an immediate value based on the instruction format. The logical solution is to use a multiplexer (mux).
 
-### Load
+![immop1](docs/images/RegImm1.png)
 
-### Store
+### Loads and Stores
+Both Load and Store instructions require roughly similar hardware additions to be function. The main component is a Data Memory. One again, both Instruction and Data Memory have 8-bit addressability, but RISC-V has a 32-bit word size, meaning we must make some sort of decision about endianess. For both memories I chose to implement Big Endian. It is also important to note that since the Data and Instruction Memory are seperate components, this CPU follows Harvard Architecture, as opposed to Von Neumann Architecture.
+
+According to the RISC-V Unprivileged Specification, "The effective address is obtained by adding register rs1 to the signextended 12-bit offset. Loads copy a value from memory to register rd. Stores copy the value in register rs2 to memory"
+
+From this description, the hardware interpretation is straightforward.
+
+![loadstore1](docs/images/LoadStore1.png)
 
 ### Branch
+Conditional Branches alter the PC address based upon conditions relating rs1 and rs2. The target address is obtained by adding the immeditate value generated to the current program counter. For my implementation, I decided to check the conditions using the ALU, and then creating a seperate dedicated `PC += imm` adder by instantiating another ALU and wiring the select bits to `4'b0000`. Many of these conditions are not possible to check using our current ALU implementation, so an extendtion has to be made:
 | ALU Control | Operation |
 |-------------|-----------|
-| `4'd0` | ADD: `a + b` |
-| `4'd1` | SUB: `a - b` |
-| `4'd2` | XOR: `a ^ b` |
-| `4'd3` | OR: `a \| b` |
-| `4'd4` | AND: `a & b` |
-| `4'd5` | SLL: `a << b[4:0]` |
-| `4'd6` | SRL: `a >> b[4:0]` |
-| `4'd7` | SRA: `$signed(a) >>> b[4:0]` |
-| `4'd8` | SLT: `($signed(a) < $signed(b)) ? 1 : 0` |
-| `4'd9` | SLTU: `($unsigned(a) < $unsigned(b)) ? 1 : 0` |
-| `4'd10` | BEQ: `(a == b) ? 1 : 0` |
-| `4'd11` | BNE: `(a != b) ? 1 : 0` |
-| `4'd12` | BGE: `($signed(a) >= $signed(b)) ? 1 : 0` |
-| `4'd13` | BGEU: `($unsigned(a) >= $unsigned(b)) ? 1 : 0` |
+| `1000` | BLT: `($signed(rs1) < $signed(rs2)) ? 1 : 0` |
+| `1001` | BLTU: `($unsigned(rs1) < $unsigned(rs2)) ? 1 : 0` |
+| `1010` | BEQ: `(rs1 == rs2) ? 1 : 0` |
+| `1011` | BNE: `(rs1 != rs2) ? 1 : 0` |
+| `1100` | BGE: `($signed(rs1) >= $signed(rs2)) ? 1 : 0` |
+| `1101` | BGEU: `($unsigned(rs1) >= $unsigned(rs2)) ? 1 : 0` |
+
+The datapath then takes the ALU output's least significant bit `ALU[0]` and wires this to the select bit of a mux to control whether or not a branch is taken. As described before, instructions lie on 4-byte boundaries. Therefore, on non-control transfer instructions (branches and jumps) PC increments by 4.
+![branch1](docs/images/Branch1.png)
+
 ### Jump
+There are two different types of unconditional jump instructions, `JAL` (Jump and Link) and `JALR` (Jump and Link Reg). `JAL` calculates the target address by adding the generated immediate value to the address of the instruction. `JALR` calculates the target address by adding the generated immediate value to rs1, then setting the least significant bit to 0. Both jump instructions store `PC + 4`.
+
+Since we have to compute `PC + 4` in addition to the target address, I made the choice to compute the target address using the ALU for both jump instructions, contrary to the branch instruction design which uses a seperate adder. 
+![branch1](docs/images/Jump1.png)
 
 ### Other
+There are two instructions that don't fall under the previous groups (`AUIPC` and `LUI`), however hardware implementation is relatively trivial. `LUI` simply stores a generated immediate value to rd, and `AUIPC` adds an immediate value to PC before storing in RD. Implementation of `AUIPC` does not require any additonal hardware. `LUI` simply requires an additonal MUX input for the Register File. 
+![other1](docs/images/Other1.png)
 
 ### Control Unit Design
+The final component is a Control Unit. Based on the given instruction, the Control Unit needs to output datapath control signals which control data movement throughout the CPU, executing the correct instruction. The control unit is hardwired, meaning the outputs are a direction function of inputs, as opposed to a microprogrammed control unit design which fetches simpler states to output signals (Like in my LC-3 CPU project).
+
+The Control Unit determines all datapath control signals using only the opcode, funct3, and funct7. A truth table for the control signals can be found at docs/images/Control Signal Truth Table.pdf
+
+Below is the complete single-cycle datapath:
+![single-cycle-datapath](docs/images/custom-riscv-single-cycle-datapath.png)
+
+## Pipelining a CPU
+
+## Future Plans
