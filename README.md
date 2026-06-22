@@ -255,8 +255,12 @@ The final pipeline with full hazard resolution is shown below:
 ![RISCV_CPU_Datapath_Final](docs/images/RISCV_CPU_Datapath_Final.png)
 
 ### Verification
+As mentioned earlier, verification of CPU functionality was detemined using isolated module-level testbenches and machine code programs. Certain hazard detection techniques were also verfied via wave analysis.
 
+Machine code programs can be found in /docs
 
+Below is an analysis of hazard resultion. The waveform can be found at sim/hazard_test.vcd
+![hazard_test](docs/images/riscv-hazard-verification.png)
 
 ## Future Plans
 During the fall I plan to implement this CPU onto an FPGA.
