@@ -73,7 +73,7 @@ Each of the instructions above fall under one of six instruction formats (R, I, 
 
 There are few key observations that are helpful for implementation. Firstly, the destination register (rd), source register 1 (rs1), source register 2 (rs2), opcode, funct3, and funct7 are always located in the same place regardless of format. Addtionally, the immediate value generated can be completely determined by what instructon format is used. Finally, all instructions with the same opcode will use the same instruction format, meaning the instruction format can be completely determined using only the opcode.
 
-A RISC-V is used to describe the key characteristics of each instruction:
+A RISC-V Card is used to describe the key characteristics of each instruction:
 | Inst | Name | FMT | Opcode | funct3 | funct7 |
 |------|------|-----|--------|--------|--------|
 | `ADD` | ADD | R | 0110011 | 0x0 | 0x00 |
@@ -115,7 +115,31 @@ A RISC-V is used to describe the key characteristics of each instruction:
 | `AUIPC` | Add Upper Imm to PC | U | 0010111 | | |
 
 ### Register-Register Operation
+The most logical place to start in my view is with Register-Register Operations (RRO). In this group of instructions some arithmetic or logical operation is performed on the values from two source registers (rs1 and rs2), and the result is stored in a destination register (rd). There are many different types of RRO that are described by the RISC-V Card table above. From this description it is already clear what the majority of components needed are.
 
+Firstly, we need some sort of component to compute these operations. An Arithmetic Logic Unit (ALU) performs an operation on two 32-bit input values, and has a corresponding 32-bit output. Select bits are also fed in as an input which describe which operation needs to performed.
+
+![regop1](docs/images/RegOp1.png)
+| ALU_SEL | Operation |
+|-------------|-----------|
+| `0000` | ADD: `a + b` |
+| `0001` | SUB: `a - b` |
+| `0010` | XOR: `a ^ b` |
+| `0011` | OR: `a \| b` |
+| `0100` | AND: `a & b` |
+| `0101` | SLL: `a << b[4:0]` |
+| `0110` | SRL: `a >> b[4:0]` |
+| `0111` | SRA: `$signed(a) >>> b[4:0]` |
+| `1000` | SLT: `($signed(a) < $signed(b)) ? 1 : 0` |
+| `1001` | SLTU: `($unsigned(a) < $unsigned(b)) ? 1 : 0` |
+
+The next thing we will need is a Register File. This will contain 32 general purpose registers with 32-bit addressability (register x0 is forced to 0). The Register File allows for 1 sychronous write, and 2 asychronous reads per clock cycle. Therefore, there are 4 inputs, the first and second read address, the write address, and the write data. It also has a REG_EN input, which functions as a write enable (WE).
+
+![regop2](docs/images/RegOp2.png)
+
+Notice how since the instruction formats fix the positions of rs1, rs2, and rd, we can directly wire these from the instruction. Addtionally, we will need some way to store instructions, and a way to access these instructions. This is where the Program Counter (PC) and Instruction Memory come in. The Instruction Memory holds the programs, and the PC stores the address of the current instruction. Instruction Memory has 8-bit or byte addressability, so each 32-bit instruction must align on a 4-byte boundary, and be spread across instructions (my implementation uses Big Endian).
+
+![regop3](docs/images/RegOp3.png)
 
 ### Register-Immediate Operation
 
@@ -124,7 +148,22 @@ A RISC-V is used to describe the key characteristics of each instruction:
 ### Store
 
 ### Branch
-
+| ALU Control | Operation |
+|-------------|-----------|
+| `4'd0` | ADD: `a + b` |
+| `4'd1` | SUB: `a - b` |
+| `4'd2` | XOR: `a ^ b` |
+| `4'd3` | OR: `a \| b` |
+| `4'd4` | AND: `a & b` |
+| `4'd5` | SLL: `a << b[4:0]` |
+| `4'd6` | SRL: `a >> b[4:0]` |
+| `4'd7` | SRA: `$signed(a) >>> b[4:0]` |
+| `4'd8` | SLT: `($signed(a) < $signed(b)) ? 1 : 0` |
+| `4'd9` | SLTU: `($unsigned(a) < $unsigned(b)) ? 1 : 0` |
+| `4'd10` | BEQ: `(a == b) ? 1 : 0` |
+| `4'd11` | BNE: `(a != b) ? 1 : 0` |
+| `4'd12` | BGE: `($signed(a) >= $signed(b)) ? 1 : 0` |
+| `4'd13` | BGEU: `($unsigned(a) >= $unsigned(b)) ? 1 : 0` |
 ### Jump
 
 ### Other
