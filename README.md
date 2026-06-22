@@ -29,18 +29,18 @@ All hand-assembled machine code programs that I used to verify CPU functionality
 
 ## Overview
 
-The following documentation fully describes this Central Processing Unit (CPU) design, beginning with an explaination of the approach I took to design my own custom single-cycle CPU for RISC-V, then Pipelining this CPU and implementing full hazard resolution. 
+The following documentation fully describes this Central Processing Unit (CPU) design, beginning with an explanation of the approach I took to design my own custom single-cycle CPU for RISC-V, then Pipelining this CPU and implementing full hazard resolution. 
 
 I intended for this documentation to not only serve as proof of this project's originality and functionality, but also as a general purpose guide for designing CPUs for any Instruction Set Architecture (ISA) for those who are interested to learn.
 
-RISC-V is a free, open source ISA. All knowledge of RISC-V that I used for this project came from the "The RISC-V Instruction Set Manual, Volume I: Unprivileged Architecture," specifically chapter 2 which describes the RV32I ISA. This specification is freely avaliable for download at the RISC-V International website.
+RISC-V is a free, open source ISA. All knowledge of RISC-V that I used for this project came from the "The RISC-V Instruction Set Manual, Volume I: Unprivileged Architecture," specifically chapter 2 which describes the RV32I ISA. This specification is freely avalable for download at the RISC-V International website.
 
-This CPU is a 5-stage (IF/ID/EX/MEM/WB) Pipelined CPU for a 37/40 instruction subset of RV32I. It uses forwarding, pipeline stalling, and register file write through for a full-proof hazard resolution. All individual components and the top-level CPU datapath were designed completely by myself and are original, although designs are likely to have similarities to other CPU projects. Verification of the CPU's functionality was confirmed using hand-written isolated module-level testbenches and hand-assembled machine code programs with GTKWave analysis.
+This CPU is a 5-stage (IF/ID/EX/MEM/WB) Pipelined CPU for a 37/40 instruction subset of RV32I. It uses forwarding, pipeline stalling, and register file write through for a complete hazard resolution. All individual components and the top-level CPU datapath were designed completely by myself and are original, although designs are likely to have similarities to other CPU projects. Verification of the CPU's functionality was confirmed using hand-written isolated module-level testbenches and hand-assembled machine code programs with GTKWave analysis.
 
 ## Building a Single-Cycle CPU
 
 ### General Procedure
-There are many different approaches that one can take when designing a CPU of their own. However, my general process for designing this CPU was simply gaining an indepth understanding of each instruction or groups of instructions using the RISC-V Unpriviledge specification and inferring the hardware neccessary to implement those instructions.
+There are many different approaches that one can take when designing a CPU of their own. However, my general process for designing this CPU was simply gaining an indepth understanding of each instruction or groups of instructions using the RISC-V Unprivileged specification and inferring the hardware necessary to implement those instructions.
 
 Additionally, while this implementation is different from other people's implementations, and those implementations differ from one another, they often include many of the same components (e.g., ALU, Data Memory, Register File, etc.) and have similar structures. Therefore, comparing your implementation to others' is useful to ensure you are not doing something completely illogical. 
 
@@ -80,7 +80,7 @@ Each of the instructions above fall under one of six instruction formats (R, I, 
 
 *Credit: The RISC-V Instruction Set Manual, Volume I: Unprivileged Architecture*
 
-There are few key observations that are helpful for implementation. Firstly, the destination register (rd), source register 1 (rs1), source register 2 (rs2), opcode, funct3, and funct7 are always located in the same place regardless of format. Addtionally, the immediate value generated can be completely determined by what instructon format is used. Finally, all instructions with the same opcode will use the same instruction format, meaning the instruction format can be completely determined using only the opcode.
+There are few key observations that are helpful for implementation. Firstly, the destination register (rd), source register 1 (rs1), source register 2 (rs2), opcode, funct3, and funct7 are always located in the same place regardless of format. Additionally, the immediate value generated can be completely determined by what instructon format is used. Finally, all instructions with the same opcode will use the same instruction format, meaning the instruction format can be completely determined using only the opcode.
 
 A RISC-V Card is used to describe the key characteristics of each instruction:
 | Inst | Name | FMT | Opcode | funct3 | funct7 |
@@ -156,7 +156,7 @@ All Register-Immediate Operations (RIO) can be done using the same ALU that we b
 ![immop1](docs/images/ImmOp1.png)
 
 ### Loads and Stores
-Both Load and Store instructions require roughly similar hardware additions to be function. The main component is a Data Memory. One again, both Instruction and Data Memory have 8-bit addressability, but RISC-V has a 32-bit word size, meaning we must make some sort of decision about endianess. For both memories I chose to implement Big Endian. It is also important to note that since the Data and Instruction Memory are seperate components, this CPU follows Harvard Architecture, as opposed to Von Neumann Architecture.
+Both Load and Store instructions require roughly similar hardware additions to be function. The main component is a Data Memory. One again, both Instruction and Data Memory have 8-bit addressability, but RISC-V has a 32-bit word size, meaning we must make some sort of decision about endianess. For both memories I chose to implement Big Endian. It is also important to note that since the Data and Instruction Memory are separate components, this CPU follows Harvard Architecture, as opposed to Von Neumann Architecture.
 
 According to the RISC-V Unprivileged Specification, "The effective address is obtained by adding register rs1 to the signextended 12-bit offset. Loads copy a value from memory to register rd. Stores copy the value in register rs2 to memory"
 
@@ -197,7 +197,7 @@ Below is the complete single-cycle datapath:
 ![single-cycle-datapath](docs/images/custom-riscv-single-cycle-datapath.png)
 
 ## Pipelining a CPU
-One important drawback of the single-cycle CPU is that every single instruction is require to complete in a singular clock cycle. This means that you are bottlenecked by your slowest instruction. The advantage of multi-cycle CPUs like the LC-3 CPU, is that the CPU can immediate go back to the `FETCH` state after execution finishes. Hoewever, one advantage of this single-cycle CPU is that it is relatively straightforward to pipeline.
+One important drawback of the single-cycle CPU is that every single instruction is require to complete in a singular clock cycle. This means that you are bottlenecked by your slowest instruction. The advantage of multi-cycle CPUs like the LC-3 CPU, is that the CPU can immediate go back to the `FETCH` state after execution finishes. However, one advantage of this single-cycle CPU is that it is relatively straightforward to pipeline.
 
 You may have noticed that for each instruction ran on the single-cycle CPU, they all follow a similar procedure. First we fetch the instruction by reading the address given by PC in the Instruction memory. Then we take this instruction and put it through the control unit, immediate generator, and register file, generating a variety of outputs. Then we potentially perform some sort of arithmetic or logic operation on these outputs. Then we potentially do a store or load from memory using the output from the ALU. And finaly we writeback values to the register file. 
 
@@ -219,7 +219,7 @@ One thing to note is that your pipeline is constantly fetch the next instruction
 
 In my single-cycle CPU, I found that the earliest a branch/flush can be determined is in the EX state, meaning the IF and ID state would potentially have improper instructions loaded. Therefore, the IF/ID and ID/EX registers need a flush input, which resets all data stored in them whenever a branch or jump is taken. 
 
-Modern CPUs have advanced branch prediction to limit flushing. However, for this implementation I opted to go for a simpler design that simply predicts that a branch/jump is not taken, filling up the pipeline with potentially improper instructions, and then flushing those register if the branch happens to be taken. This does mean that every time a jump is taken the pipeline is gauranteed to fill up with improper instruction, however I opted for this design to maintain simplicity.
+Modern CPUs have advanced branch prediction to limit flushing. However, for this implementation I opted to go for a simpler design that simply predicts that a branch/jump is not taken, filling up the pipeline with potentially improper instructions, and then flushing those register if the branch happens to be taken. This does mean that every time a jump is taken the pipeline is guaranteed to fill up with improper instruction, however I opted for this design to maintain simplicity.
 
 The pipelined CPU described above is shown below:
 ![custom-riscv-pipelined-datapath](docs/images/custom-riscv-pipelined-datapath.png)
@@ -255,7 +255,7 @@ The final pipeline with full hazard resolution is shown below:
 ![RISCV_CPU_Datapath_Final](docs/images/RISCV_CPU_Datapath_Final.png)
 
 ### Verification
-As mentioned earlier, verification of CPU functionality was detemined using isolated module-level testbenches and machine code programs. Certain hazard detection techniques were also verfied via wave analysis.
+As mentioned earlier, verification of CPU functionality was determined using isolated module-level testbenches and machine code programs. Certain hazard detection techniques were also verified via wave analysis.
 
 Machine code programs can be found in /docs
 
