@@ -259,7 +259,7 @@ As mentioned earlier, verification of CPU functionality was determined using iso
 
 Machine code programs can be found in /docs
 
-Below is an analysis of hazard resultion. The waveform can be found at sim/hazard_test.vcd
+Below is an analysis of hazard resolution. The waveform can be found at sim/hazard_test.vcd
 ![hazard_test](docs/images/riscv-hazard-verification.png)
 
 ## Future Plans
