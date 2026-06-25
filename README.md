@@ -9,6 +9,8 @@ All hand-assembled machine code programs that I used to verify CPU functionality
 - docs/no_hazard_pipelined_tests
 - docs/hazard_pipelined_tests
 
+![RISCV_CPU_Datapath_Final](docs/images/RISCV_CPU_Datapath_Final.png)
+
 ## Table of Contents
 - [Overview](#overview)
 - [Building a Single-Cycle CPU](#building-a-single-cycle-cpu)
